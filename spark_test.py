@@ -1,6 +1,8 @@
 import logging
 import unittest
 
+from operator import add
+
 from pyspark.sql import SparkSession
 
 
@@ -53,7 +55,7 @@ class SimpleTest(PySparkTest):
 
 
 ####################################### PYTEST ###################################################
-# decorator
+# decorator - to set logging level to Warning
 def logger_fix(func):
     def wrapper(*args, **kwargs):
         try:
@@ -82,8 +84,7 @@ def test_basic():
 
 @logger_fix
 def test_filter_df(spark_session):
-    spark = spark_session.builder.master('local').appName('PyTest Spark App').enableHiveSupport().getOrCreate()
-    df = spark.createDataFrame([(i,) for i in list(range(50))])
+    df = spark_session.createDataFrame([(i,) for i in list(range(50))])
     results = [i[0] for i in list(filter_df(df, 10).collect())]
     expected_results = list(range(10))
     assert results == expected_results
